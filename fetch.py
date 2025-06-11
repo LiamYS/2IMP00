@@ -1,5 +1,4 @@
 import csv
-from datetime import datetime
 from huggingface_hub import list_models
 
 models = list_models(cardData=True)
