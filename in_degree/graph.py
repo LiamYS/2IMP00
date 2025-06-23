@@ -2,19 +2,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Set publication-style aesthetics
-sns.set_theme(style="whitegrid")
-plt.rcParams.update({
-    "font.size": 12,
-    "axes.titlesize": 16,
-    "axes.labelsize": 14,
-    "figure.figsize": (12, 7),
-    "axes.spines.top": False,
-    "axes.spines.right": False
-})
+sns.set_theme(style="whitegrid", font_scale=1.2)
 
-# Load CSV file
-df = pd.read_csv("in_degree/data.csv")
+df = pd.read_csv("in_degree/export.csv")
 
 top10 = df.sort_values(by="in_degree", ascending=False).head(10)
 
@@ -24,25 +14,20 @@ def shorten(name, max_len=40):
 top10["short_model"] = top10["model"].apply(shorten)
 
 # Bar plot
-plt.figure(figsize=(12, 7))
+plt.figure(figsize=(10, 6))
 barplot = sns.barplot(
     data=top10,
     x="in_degree",
     y="short_model",
-    palette="Blues_d",
-    edgecolor='black'
 )
 
-# Add value labels to bars
-for index, row in top10.iterrows():
-    plt.text(row.in_degree + 50, index, f"{row.in_degree:,}", va='center', fontsize=11)
+for container in barplot.containers:
+    barplot.bar_label(container, label_type="edge", fontsize=10, padding=3)
 
-# Labels and title
 plt.xlabel("Number of Downstream Models (In-Degree)")
 plt.ylabel("Model")
-plt.title("Top 10 Most Reused Models in the Hugging Face Ecosystem")
+plt.title("Top 10 Most Reused Models in the HF Ecosystem")
 
-# Tight layout and optional save
 plt.tight_layout()
 plt.savefig("in_degree/graph.png", dpi=300)
 plt.show()

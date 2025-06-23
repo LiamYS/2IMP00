@@ -25,7 +25,14 @@ with GraphDatabase.driver(URI, auth=AUTH) as driver:
         driver.session().run("""
             LOAD CSV WITH HEADERS FROM 'file:///models.csv' AS row FIELDTERMINATOR '|'
             CALL (row) {
-                MERGE (m: Model {id: row.id, likes: toInteger(row.likes), downloads: toInteger(row.downloads), created_at: row.created_at})
+                MERGE (m: Model {id: row.id})
+                SET m.likes = CASE WHEN row.likes <> '' THEN toInteger(row.likes) ELSE NULL END,
+                    m.downloads = CASE WHEN row.downloads <> '' THEN toInteger(row.downloads) ELSE NULL END,
+                    m.pipeline_tag = CASE WHEN row.pipeline_tag <> '' THEN row.pipeline_tag ELSE NULL END,
+                    m.license = CASE WHEN row.license <> '' THEN row.license ELSE NULL END,
+                    m.library_name = CASE WHEN row.library_name <> '' THEN row.library_name ELSE NULL END,
+                    m.model_type = CASE WHEN row.model_type <> '' THEN row.model_type ELSE NULL END,
+                    m.created_at = CASE WHEN row.created_at <> '' THEN row.created_at ELSE NULL END
             } IN CONCURRENT TRANSACTIONS
         """)
 

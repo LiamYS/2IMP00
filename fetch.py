@@ -1,7 +1,7 @@
 import csv
 from huggingface_hub import list_models
 
-models = list_models(cardData=True)
+models = list_models(cardData=True, fetch_config=True)
 model_data = []
 
 for i, model in enumerate(models):
@@ -21,6 +21,7 @@ for i, model in enumerate(models):
         "library_name": card_data.get("library_name"),
         "license": card_data.get("license"),
         "pipeline_tag": card_data.get("pipeline_tag"),
+        "model_type": model.config.get("model_type") if model.config else None,
     }
 
     model_data.append(model_info)
